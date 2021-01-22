@@ -56,9 +56,9 @@ CREATE TABLE #i2b2DatabaseSchema (
 	SchemaName VARCHAR(200) NOT NULL
 )
 INSERT INTO #i2b2DatabaseSchema (Cell, DatabaseName, SchemaName)
-	SELECT 'ONT','i2b2metadata','dbo'
+	SELECT 'ONT','i2b2','dbo'
 	UNION ALL 
-	SELECT 'CRC','i2b2crcdata','dbo'
+	SELECT 'CRC','i2b2','dbo'
 
 -----------------------------------------------------------------------------------------------------
 -- Define prefixes for the display text of concepts
@@ -87,6 +87,7 @@ INSERT INTO #PathPrefix (Pattern, Prefix)
 
 TRUNCATE TABLE app.ConceptForwardIndex
 TRUNCATE TABLE app.ConceptTokenizedIndex
+SET QUOTED_IDENTIFIER ON;
 DELETE FROM app.ConceptInvertedIndex
 TRUNCATE TABLE rela.ConceptSpecializationGroup
 TRUNCATE TABLE rela.QueryConceptDependency
@@ -135,7 +136,7 @@ CREATE TABLE #i2b2 (
 DECLARE @sqlTableAccess NVARCHAR(MAX)
 SELECT @sqlTableAccess = 'SELECT NEWID() Id, CAST(NULL AS UNIQUEIDENTIFIER) ParentId, CAST(NULL AS UNIQUEIDENTIFIER) RootId, 0 IsParent, 1 IsRoot, NULL DisplayText, C_TABLE_NAME' 
 			+', C_HLEVEL, C_FULLNAME, C_NAME, C_TOTALNUM, C_BASECODE, C_METADATAXML, C_FACTTABLECOLUMN, C_DIMTABLENAME, C_COLUMNNAME, C_COLUMNDATATYPE, C_OPERATOR, C_DIMCODE, C_TOOLTIP, ''@'' M_APPLIED_PATH, NULL M_EXCLUSION_CD, NULL SOURCESYSTEM_CD'
-			+' FROM '+DatabaseName+'.'+SchemaName+'.TABLE_ACCESS'
+			+' FROM '+ DatabaseName+'.'+SchemaName+'.TABLE_ACCESS'
 			+' WHERE C_PROTECTED_ACCESS=''N'' AND C_SYNONYM_CD=''N'' AND C_VISUALATTRIBUTES LIKE ''_[A]%'' '
 	FROM #i2b2DatabaseSchema
 	WHERE Cell='ONT'

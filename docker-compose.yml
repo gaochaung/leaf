@@ -1,21 +1,31 @@
-version: "3"
+version: "3.0"
 services:
 
   mssql:
     build:
       context: ./src/db/build
       args:
-        sapw: ${DB_SA_PW}
+      - sapw=GAOchuang900529
     ports:
       - "1433:1433"
     volumes:
       - "leaf-mssql:/var/opt/mssql"
-      - "${DB_BAK_DIR}:/bak"
+      - "/src/db/bak:/bak"
     networks:
       local:
         aliases:
           - mssql
   
+  node:
+    build: ./src/ui-client
+    restart: on-failure
+    ports:
+      - 3000:3000
+    #command: ["npm", "start"]
+    depends_on:
+      - mssql
+  #   - coreapi
+
   # coreapi:
   #   build: 
   #     context: ./src/server
@@ -42,27 +52,10 @@ services:
   #       aliases:
   #         - coreapi
 
-  # node:
-  #   build: ./src/ui-client
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - mssql
-  #     - coreapi
-  #   volumes:
-  #     - ./src/ui-client:/app
-  #   environment:
-  #     NODE_ENV: ${ENV_DOCKER_ENVIRONMENT}
-  #   working_dir: /app
-  #   command: ["npm", "start"]
-  #   networks:
-  #     local:
-  #       aliases:
-  #         - node
-
 volumes:
   leaf-mssql:
 
 networks:
   local:
     driver: bridge
+

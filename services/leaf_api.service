@@ -1,0 +1,18 @@
+[Unit]
+Description=Leaf API
+After=network.target
+
+[Service]
+EnvironmentFile=/var/opt/leafapi/services/leaf_api.service.conf
+User=leafuser
+Group=leafuser
+Type=idle
+TimeoutStartSec=300
+TimeoutStopSec=30
+WorkingDirectory=/var/opt/leafapi/api/
+ExecStart=/usr/bin/dotnet API.dll
+
+
+[Install]
+WantedBy=multi-user.target
+
